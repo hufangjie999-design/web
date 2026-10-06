@@ -81,6 +81,11 @@ p{margin:0}
 .btn--ghost-dark:hover{border-color:#fff}
 .btn[aria-disabled="true"]{opacity:.5;cursor:not-allowed}
 
+/* 简历文件还没就绪时，直接隐藏下载入口 ——
+   一个"简历准备中"的灰按钮比没有按钮更显眼、更像坏了。
+   联系区里那一个会保留（作为说明性状态），所以用 .btn--keep 排除在外。 */
+.btn.is-missing:not(.btn--keep){display:none !important}
+
 /* ---------- 标签 ---------- */
 .chip{
   display:inline-flex;align-items:center;font-size:13px;
