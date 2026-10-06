@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="作品详情 · 胡方杰设计作品集">
+<meta name="theme-color" content="#FFFFFF">
+<title>作品详情 · 胡方杰 设计作品集</title>
+<link rel="stylesheet" href="assets/css/base.css">
+<link rel="stylesheet" href="assets/css/detail.css">
+<link rel="stylesheet" href="assets/css/lightbox.css">
+<link rel="stylesheet" href="assets/css/video.css">
+</head>
+<body>
+
+<div class="topbar">
+  <div class="wrap topbar__in">
+    <a class="topbar__back" href="index.html#works" data-i18n="work.back">← 返回全部作品</a>
+    <div class="topbar__brand" data-i18n="work.brand">胡方杰 · 设计作品集</div>
+    <div class="topbar__right">
+      <div class="lang" role="group" aria-label="Language / 语言">
+        <button class="lang__btn" type="button" data-lang-set="zh" aria-pressed="true">中</button>
+        <button class="lang__btn" type="button" data-lang-set="en" aria-pressed="false">EN</button>
+      </div>
+      <a class="btn" href="resume.pdf" download data-resume="resume.pdf" data-i18n="nav.resume">下载简历</a>
+    </div>
+  </div>
+</div>
+
+<!-- 详情内容由 assets/js/works.js 依据 URL 上的 #/作品id 渲染 -->
+<main id="work-root"></main>
+
+<footer class="footer">
+  <div class="wrap footer__in">
+    <div>© <span id="d-year"></span> <span data-i18n="footer.site">个人设计作品集</span></div>
+    <div><a href="index.html" data-i18n="footer.backHome">返回首页</a></div>
+  </div>
+</footer>
+
+<script src="assets/js/config.js"></script>
+<script src="assets/js/works-data.js"></script>
+<script src="assets/js/i18n.js"></script>
+<script src="assets/img/manifest.js"></script>
+<script src="assets/js/lazy.js"></script>
+<script src="assets/js/works.js"></script>
+<script src="assets/js/lightbox.js"></script>
+<script src="assets/js/lang-switch.js"></script>
+<script>
+document.getElementById('d-year').textContent = new Date().getFullYear();
+/* 仅用于评审截图：?scrollY=1800 自动滚到指定位置；?captureH=1 输出内容高度 */
+(function () {
+  var q = location.search;
+  var m = q.match(/[?&]scrollY=(\d+)/);
+  if (m) {
+    var y = parseInt(m[1], 10);
+    window.addEventListener('load', function () { setTimeout(function () { window.scrollTo(0, y); }, 200); });
+  }
+  if (q.indexOf('captureH=1') >= 0) {
+    window.addEventListener('load', function () {
+      setTimeout(function () {
+        var h = Math.ceil(document.documentElement.getBoundingClientRect().height);
+        var el = document.createElement('meta');
+        el.name = 'dsh-content-height';
+        el.content = String(h);
+        document.head.appendChild(el);
+      }, 400);
+    });
+  }
+})();
+</script>
+</body>
+</html>

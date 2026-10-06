@@ -1,0 +1,76 @@
+/* ============================================================
+ * video.css —— 视频卡片样式
+ * 设计意图：先只显示封面 + 播放键，点击后才插入 iframe，
+ *           避免一进详情页就加载第三方播放器拖慢速度。
+ * ============================================================ */
+
+.videos{display:grid;gap:20px}
+
+.video{margin:0}
+
+.video__btn{
+  position:relative;display:block;width:100%;padding:0;
+  border:1px solid var(--line);border-radius:12px;overflow:hidden;
+  background:var(--bg-soft);cursor:pointer;
+  transition:border-color .25s var(--ease);
+}
+.video__btn:hover{border-color:var(--ink)}
+.video__btn.is-playing{cursor:default;border-color:var(--line)}
+
+.video__poster{display:block;aspect-ratio:16/9}
+.video__poster img{
+  width:100%;height:100%;object-fit:cover;display:block;
+  transition:transform .6s var(--ease), opacity .5s var(--ease);
+  opacity:0;
+}
+.video__poster img.is-loaded{opacity:1}
+.video__btn:hover .video__poster img{transform:scale(1.02)}
+
+/* 播放键 */
+.video__play{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:76px;height:76px;border-radius:50%;
+  background:rgba(255,255,255,.94);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 10px 34px rgba(0,0,0,.28);
+  transition:transform .25s var(--ease), background .25s var(--ease);
+}
+.video__btn:hover .video__play{transform:translate(-50%,-50%) scale(1.06)}
+.video__play i{
+  width:0;height:0;display:block;margin-left:5px;
+  border-left:20px solid #16181D;
+  border-top:12px solid transparent;
+  border-bottom:12px solid transparent;
+}
+
+.video__hint{
+  position:absolute;left:14px;bottom:14px;
+  font-size:12px;letter-spacing:.06em;
+  padding:6px 12px;border-radius:999px;
+  background:rgba(12,16,24,.78);color:#fff;backdrop-filter:blur(6px);
+}
+
+/* 地址未填时的样子：别让人以为能点 */
+.video__btn.is-todo{cursor:not-allowed}
+.video__btn.is-todo .video__play{background:rgba(255,255,255,.72)}
+.video__btn.is-todo .video__hint{background:rgba(120,90,20,.86)}
+.video__btn.is-todo:hover{border-color:var(--line)}
+.video__btn.is-todo:hover .video__play{transform:translate(-50%,-50%)}
+
+/* 播放器容器（点击后才有内容） */
+.video__frame{display:none}
+.video__frame.is-on{display:block;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000}
+.video__frame iframe,
+.video__frame video{width:100%;height:100%;display:block;border:0}
+
+.video__cap{
+  display:flex;flex-direction:column;gap:4px;
+  font-size:13px;color:var(--ink-3);padding-top:12px;
+}
+.video__cap b{color:var(--ink-2);font-weight:600}
+
+@media (max-width:560px){
+  .video__play{width:58px;height:58px}
+  .video__play i{border-left-width:15px;border-top-width:9px;border-bottom-width:9px}
+  .video__hint{left:10px;bottom:10px;font-size:11px}
+}

@@ -1,0 +1,211 @@
+/* ============================================================
+ * home.css —— 首页
+ * 结构：深色粒子首屏 → 白色作品区（精选 / 全部）→ 关于 → 联系
+ * ============================================================ */
+
+/* ---------- 顶部导航 ---------- */
+.nav{
+  position:sticky;top:0;z-index:40;
+  background:rgba(255,255,255,.92);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);
+}
+.nav__in{display:flex;align-items:center;justify-content:space-between;height:64px;gap:20px}
+.nav__brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:15px}
+.nav__brand i{width:26px;height:26px;border-radius:7px;background:var(--accent);display:block;flex:none}
+.nav__brand small{font-weight:400;color:var(--ink-3);font-size:12px;letter-spacing:.08em}
+.nav__menu{display:flex;gap:30px;font-size:14px;color:var(--ink-2)}
+.nav__menu a{transition:color .2s var(--ease)}
+.nav__menu a:hover{color:var(--accent)}
+.nav__right{display:flex;align-items:center;gap:10px}
+
+/* ---------- 语言切换 ---------- */
+.lang{
+  display:flex;align-items:center;gap:2px;
+  padding:3px;border-radius:999px;
+  border:1px solid var(--line);background:var(--bg-soft);
+}
+.lang__btn{
+  min-width:34px;height:30px;padding:0 10px;
+  font-size:12px;font-weight:600;letter-spacing:.02em;
+  border:0;border-radius:999px;background:transparent;color:var(--ink-3);
+  transition:background .2s var(--ease), color .2s var(--ease);
+}
+.lang__btn:hover{color:var(--ink)}
+.lang__btn.is-on{background:var(--ink);color:#fff}
+/* 让"下载简历"按钮在窄屏也能收起 */
+.nav .btn{white-space:nowrap}
+
+/* ---------- 首屏：深色 + 粒子 ---------- */
+.hero{
+  position:relative;overflow:hidden;
+  min-height:640px;height:88vh;max-height:820px;
+  display:flex;align-items:center;
+  background:
+    radial-gradient(1100px 620px at 78% 38%, rgba(79,224,176,.10), transparent 62%),
+    radial-gradient(900px 520px at 16% 82%, rgba(72,132,255,.10), transparent 60%),
+    linear-gradient(180deg,#080B12 0%,#0A0F18 55%,#080B12 100%);
+}
+/* 细网格（"仪表盘"质感） */
+.hero::before{
+  content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
+  background-image:
+    linear-gradient(rgba(120,160,200,.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(120,160,200,.055) 1px, transparent 1px);
+  background-size:64px 64px;
+  mask-image:radial-gradient(75% 65% at 50% 45%, #000 35%, transparent 100%);
+  -webkit-mask-image:radial-gradient(75% 65% at 50% 45%, #000 35%, transparent 100%);
+}
+/* 底部渐隐，衔接白色作品区 */
+.hero::after{
+  content:"";position:absolute;left:0;right:0;bottom:0;height:180px;pointer-events:none;
+  background:linear-gradient(180deg, transparent, #080B12);
+  z-index:2;
+}
+#particles{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:1}
+
+.hero__in{position:relative;z-index:3;width:100%}
+.hero h1{
+  margin-top:30px;font-size:68px;line-height:1.06;letter-spacing:-.03em;
+  color:var(--dark-text);text-shadow:0 0 60px rgba(79,224,176,.16);
+}
+.hero h1 em{
+  font-style:normal;
+  background:linear-gradient(100deg,#ffffff 12%,#8FF3D6 52%,#69A9FF 92%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.hero__lede{margin-top:24px;font-size:19px;color:#A8B7C7;max-width:600px}
+.hero__actions{display:flex;gap:12px;margin-top:34px;flex-wrap:wrap}
+.hero__meta{display:flex;gap:14px;margin-top:32px;flex-wrap:wrap}
+.hero__meta .chip{
+  background:rgba(20,28,40,.55);border-color:var(--dark-line);color:#B9C7D6;
+  backdrop-filter:blur(6px);
+}
+.hero__meta .chip b{color:#fff;font-weight:600}
+
+/* ---------- 区块通用 ---------- */
+.section{padding:88px 0}
+.section--soft{
+  background:var(--bg-soft);
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+}
+
+/* ---------- 精选作品 ---------- */
+.featured{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.featured .card--wide{grid-column:1/-1}
+.featured .card--wide .card__thumb{aspect-ratio:21/9}
+.featured .card .card__thumb{aspect-ratio:4/3}
+.featured .card--wide .card__meta h3{font-size:24px}
+
+/* ---------- 筛选 + 搜索 ---------- */
+.tools{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:16px;margin-bottom:30px;flex-wrap:wrap;
+}
+.filters{display:flex;gap:8px;flex-wrap:wrap}
+.filter{
+  font-size:14px;padding:8px 16px;border-radius:999px;
+  border:1px solid var(--line);background:transparent;color:var(--ink-2);
+  transition:border-color .2s var(--ease), background .2s var(--ease), color .2s var(--ease);
+}
+.filter:hover{border-color:var(--ink)}
+.filter[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
+
+.search{position:relative;display:flex;align-items:center;min-width:240px;flex:0 1 300px}
+.search__input{
+  width:100%;height:40px;padding:0 34px 0 38px;
+  font-family:inherit;font-size:14px;color:var(--ink);
+  border:1px solid var(--line);border-radius:999px;background:var(--bg);
+  transition:border-color .2s var(--ease), box-shadow .2s var(--ease);
+}
+.search__input::placeholder{color:var(--ink-3)}
+.search__input:focus{outline:none;border-color:var(--ink);box-shadow:0 0 0 3px rgba(22,24,29,.06)}
+.search__input::-webkit-search-cancel-button{display:none}
+/* 放大镜（纯 CSS，不额外请求图片） */
+.search::before{
+  content:"";position:absolute;left:15px;width:11px;height:11px;
+  border:1.6px solid var(--ink-3);border-radius:50%;pointer-events:none;
+}
+.search::after{
+  content:"";position:absolute;left:25px;top:24px;width:6px;height:1.6px;
+  background:var(--ink-3);transform:rotate(45deg);pointer-events:none;
+}
+.search__clear{
+  position:absolute;right:8px;width:24px;height:24px;line-height:1;
+  border:0;border-radius:50%;background:var(--bg-soft);color:var(--ink-2);
+  font-size:15px;display:flex;align-items:center;justify-content:center;
+}
+/* 注意：display:flex 会覆盖 [hidden] 的默认 display:none，
+   必须显式声明，否则搜索框为空时"×"也会一直显示 */
+.search__clear[hidden]{display:none}
+.search__clear:hover{background:var(--line)}
+
+/* ---------- 作品栅格（统一 4:3 裁切，保证对齐） ---------- */
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:44px 20px}
+.grid .card__thumb{aspect-ratio:4/3}
+.grid.is-filtered .card[hidden]{display:none}
+.empty{display:none;padding:56px 0;color:var(--ink-3);font-size:15px}
+.empty.is-on{display:block}
+
+/* 卡片进场（滚入视口时淡入）
+   安全网：未标记 .is-in 的元素也会在 1.2s 后被脚本强制显示 */
+.reveal{opacity:0;transform:translateY(14px);transition:opacity .6s var(--ease), transform .6s var(--ease)}
+.reveal.is-in{opacity:1;transform:none}
+
+/* 禁用 JS 时不要隐藏任何内容 */
+.no-js .reveal{opacity:1;transform:none}
+
+/* ---------- 关于我 ---------- */
+.about{display:grid;grid-template-columns:1.15fr .85fr;gap:64px;align-items:start}
+.about h2{font-size:30px;margin-bottom:24px}
+.about p{color:var(--ink-2);margin-bottom:18px;max-width:540px}
+.skills{display:flex;flex-wrap:wrap;gap:8px;margin-top:28px}
+.timeline{margin-top:36px;border-top:1px solid var(--line)}
+.tl-row{
+  display:grid;grid-template-columns:96px 1fr;gap:20px;
+  padding:16px 0;border-bottom:1px solid var(--line);font-size:14px;
+}
+.tl-row b{font-weight:600}
+.tl-row span{color:var(--ink-2)}
+.portrait{border-radius:var(--radius);overflow:hidden;border:1px solid var(--line);background:var(--bg-soft);aspect-ratio:4/5}
+.portrait img{width:100%;height:100%;object-fit:cover;object-position:top center;filter:grayscale(.15)}
+.portrait__cap{font-size:13px;color:var(--ink-3);padding-top:12px}
+
+/* ---------- 联系方式 ---------- */
+.contact{margin-top:76px}
+.contact__in{display:flex;align-items:center;justify-content:space-between;gap:32px;flex-wrap:wrap}
+.contact h3{font-size:26px}
+.contact p{color:var(--dark-dim);font-size:14px;margin-top:10px}
+.contact__actions{display:flex;gap:12px;flex-wrap:wrap}
+.contact a{color:#fff;border-bottom:1px solid rgba(255,255,255,.3)}
+.contact a:hover{border-color:#fff}
+
+/* ---------- 响应式 ---------- */
+@media (max-width:960px){
+  .nav__brand small{display:none}   /* 窄屏只留名字，把空间让给语言切换 */
+  .hero h1{font-size:44px}
+  .hero{height:auto;min-height:0;padding:72px 0 88px}
+  .featured,.about{grid-template-columns:1fr}
+  .grid{grid-template-columns:repeat(2,1fr)}
+  .nav__menu{display:none}
+}
+
+@media (max-width:560px){
+  .hero h1{font-size:30px}
+  .hero__lede{font-size:16px}
+  .hero{padding:52px 0 64px}
+  .section{padding:56px 0}
+  .grid{gap:30px 14px}
+  .about{gap:36px}
+  .contact{margin-top:52px}
+  .contact h3{font-size:21px}
+  .featured{gap:20px}
+  /* 手机上导航更挤：简历按钮收成图标感更弱的文字，语言切换保留 */
+  .nav__in{gap:10px;height:58px}
+  .nav__right{gap:6px}
+  .nav__right .btn{height:36px;padding:0 14px;font-size:13px}
+  .lang{padding:2px}
+  .lang__btn{min-width:30px;height:26px;padding:0 8px;font-size:11px}
+  .topbar__right .btn{height:36px;padding:0 14px;font-size:13px}
+}

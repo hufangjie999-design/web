@@ -1,0 +1,11 @@
+# 统一换行符：源码在 Windows 上编辑，但存进 git 用 LF
+# 避免"同一份文件在不同机器上整篇显示为改动"
+* text=auto eol=lf
+
+# 图片与二进制不参与换行转换
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.pdf binary
+*.ico binary
