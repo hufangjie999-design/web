@@ -1,0 +1,8 @@
+# 仓库元数据本身（不应进版本库）
+.git
+.git/*
+
+# 系统与编辑器
+Thumbs.db
+Desktop.ini
+.DS_Store
