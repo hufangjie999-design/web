@@ -1,8 +1,8 @@
-# 仓库元数据本身（不应进版本库）
+# repository metadata must never be committed
 .git
 .git/*
 
-# 系统与编辑器
+# system / editor files
 Thumbs.db
 Desktop.ini
 .DS_Store
