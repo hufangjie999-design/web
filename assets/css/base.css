@@ -167,6 +167,25 @@ p{margin:0}
 .footer__in{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
 .footer a:hover{color:var(--accent)}
 
+/* ---------- 键盘焦点（只在键盘操作时显示，不干扰鼠标用户） ---------- */
+:focus{outline:none}
+:focus-visible{
+  outline:2px solid var(--accent);
+  outline-offset:3px;
+  border-radius:4px;
+}
+/* 深色区块与首屏换成亮色描边，否则墨绿在深底上看不清 */
+.dark-block :focus-visible,
+.hero :focus-visible{outline-color:var(--glow)}
+
+/* 跳到主内容（键盘/屏幕阅读器用户） */
+.skip-link{
+  position:absolute;left:-9999px;top:0;z-index:200;
+  padding:12px 18px;border-radius:0 0 10px 0;
+  background:var(--ink);color:#fff;font-size:14px;
+}
+.skip-link:focus{left:0}
+
 /* ---------- 工具类 ---------- */
 .sr-only{
   position:absolute;width:1px;height:1px;padding:0;margin:-1px;
@@ -181,6 +200,8 @@ p{margin:0}
     animation-iteration-count:1 !important;
     transition-duration:.001ms !important;
   }
+  /* 动效关闭时必须直接可见，不能停留在透明状态 */
+  .reveal{opacity:1 !important;transform:none !important}
 }
 
 /* ---------- 响应式断点 ---------- */

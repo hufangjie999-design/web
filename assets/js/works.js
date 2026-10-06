@@ -305,6 +305,39 @@
       w = list[0];
     }
     render(w);
+    checkResume();
+  }
+
+  /* 顶栏的简历按钮：文件不存在时降级（与首页同一套逻辑与文案）。
+     之前只有首页做了这个检测，结果详情页仍显示"下载简历"且可点，
+     点开是 404 —— 审计链接时才发现。 */
+  function checkResume() {
+    var c = (window.SITE && window.SITE.contact) || {};
+    var links = document.querySelectorAll('[data-resume]');
+    var canCheck = location.protocol === 'http:' || location.protocol === 'https:';
+    if (!links.length || !canCheck) return;
+    var path = c.resume || 'resume.pdf';
+    fetch(path, { method: 'HEAD' })
+      .then(function (res) { if (!res.ok) throw new Error('missing'); })
+      .catch(function () {
+        Array.prototype.forEach.call(links, function (a) {
+          var label = a.querySelector('[data-resume-label]');
+          var original = (label ? label.textContent : a.textContent).trim();
+          a.removeAttribute('href');
+          a.removeAttribute('download');
+          a.setAttribute('aria-disabled', 'true');
+          a.classList.add('is-missing');
+          a.setAttribute('aria-label', original + '（' + T('resume.missing') + '）');
+          if (label) {
+            label.textContent = T('resume.missing');
+            label.removeAttribute('data-i18n');
+          } else {
+            a.textContent = T('resume.missing');
+          }
+          a.title = T('resume.missing') + '：把 PDF 命名为 ' + path + ' 放在站点根目录即自动生效';
+          a.addEventListener('click', function (e) { e.preventDefault(); });
+        });
+      });
   }
 
   window.addEventListener('hashchange', boot);

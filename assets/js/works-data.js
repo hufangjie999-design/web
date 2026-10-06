@@ -35,7 +35,7 @@ const SITE = {
     },
     {
       year: '教育',
-      text: '飞行器动力工程（待补充）'
+      text: '飞行器动力工程'
     }
   ],
   contact: {
@@ -43,6 +43,9 @@ const SITE = {
     wechat: '待补充',
     resume: 'resume.pdf'
   },
+  /* 个人照片：填图片路径即可（例如 'assets/img/me.jpg'）。
+     留空时"关于我"显示一个设计过的占位方块，而不是一张不相干的图。 */
+  photo: '',
   particles: {
     density: 9500,
     maxCount: 200,

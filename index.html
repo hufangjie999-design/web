@@ -6,11 +6,14 @@
 <meta name="description" content="胡方杰的设计作品集：产品设计、视觉传达与数字媒体方向的精选作品。">
 <meta name="theme-color" content="#080B12">
 <title>胡方杰 · 设计作品集</title>
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="assets/css/base.css">
 <link rel="stylesheet" href="assets/css/home.css">
 <link rel="stylesheet" href="assets/css/lightbox.css">
 </head>
 <body>
+
+<a class="skip-link" href="#works">跳到作品 / Skip to work</a>
 
 <!-- ============ 顶部导航 ============ -->
 <nav class="nav">
@@ -28,7 +31,7 @@
         <button class="lang__btn" type="button" data-lang-set="zh" aria-pressed="true">中</button>
         <button class="lang__btn" type="button" data-lang-set="en" aria-pressed="false">EN</button>
       </div>
-      <a class="btn btn--dark" id="resume-btn" data-resume="resume.pdf" href="resume.pdf" download data-i18n="nav.resume">下载简历</a>
+      <a class="btn btn--dark" id="resume-btn" data-resume="resume.pdf" href="resume.pdf" download data-i18n="nav.resume"><span data-resume-label>下载简历</span></a>
     </div>
   </div>
 </nav>
@@ -42,7 +45,7 @@
     <p class="hero__lede" id="hero-lede"></p>
     <div class="hero__actions">
       <a class="btn btn--light" href="#works" data-i18n="hero.viewWorks">查看作品 →</a>
-      <a class="btn btn--ghost-dark" href="resume.pdf" download data-resume="resume.pdf" data-i18n="hero.resume">下载简历 PDF</a>
+      <a class="btn btn--ghost-dark" href="resume.pdf" download data-resume="resume.pdf" data-i18n="hero.resume"><span data-resume-label>下载简历 PDF</span></a>
     </div>
     <div class="hero__meta">
       <span class="chip"><b id="stat-works">—</b> <span data-i18n="stat.works">个精选作品</span></span>
@@ -106,25 +109,32 @@
         <div class="timeline" id="timeline"></div>
       </div>
       <div>
-        <div class="portrait">
-          <!-- 个人照片待替换；现在用作品的压缩图占位（走 build_images.py 处理后的资源） -->
-          <img data-src="assets/img/app-task-hero.jpg" alt="个人照片（占位）" decoding="async">
+        <!-- 个人照片：SITE.photo 留空时显示设计过的占位块，而不是一张不相干的图 -->
+        <div class="portrait is-placeholder" id="portrait">
+          <span class="portrait__mark" id="portrait-mark">胡</span>
         </div>
-        <p class="portrait__cap" data-i18n="about.photoCap">个人照片占位，待替换为真实照片</p>
+        <p class="portrait__cap" id="portrait-cap" data-i18n="about.photoCap">个人照片占位，待替换为真实照片</p>
       </div>
     </div>
 
-    <!-- 联系方式 -->
+    <!-- 联系方式：邮箱/微信留空时自动隐藏对应项，不会出现"待补充"这种半成品感 -->
     <div class="contact" id="contact">
       <div class="dark-block">
         <div class="contact__in">
           <div>
             <h3 data-i18n="contact.title">想聊聊？</h3>
-            <p><span data-i18n="contact.email">邮箱</span>：<a id="contact-email">待补充</a>
-               · <span data-i18n="contact.wechat">微信</span>：<span id="contact-wechat">待补充</span></p>
+            <p class="contact__line" id="contact-line">
+              <span class="contact__item" id="contact-email-item" hidden>
+                <span data-i18n="contact.email">邮箱</span>：<a id="contact-email"></a><span class="sep">·</span>
+              </span>
+              <span class="contact__item" id="contact-wechat-item" hidden>
+                <span data-i18n="contact.wechat">微信</span>：<span id="contact-wechat"></span>
+              </span>
+              <span class="contact__todo" id="contact-todo" hidden data-i18n="contact.pending">联系方式整理中</span>
+            </p>
           </div>
           <div class="contact__actions">
-            <a class="btn btn--light" href="resume.pdf" download data-resume="resume.pdf" data-i18n="hero.resume">下载简历 PDF</a>
+            <a class="btn btn--light" href="resume.pdf" download data-resume="resume.pdf" data-i18n="hero.resume"><span data-resume-label>下载简历 PDF</span></a>
             <a class="btn btn--ghost-dark" id="mail-btn" href="#contact" data-i18n="contact.mail">发邮件</a>
           </div>
         </div>

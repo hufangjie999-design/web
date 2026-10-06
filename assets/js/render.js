@@ -46,6 +46,18 @@
     return (window.WORKS || []).filter(function (w) { return w.visible !== false; });
   }
 
+  /* 判断一个配置值是否"真的填了"：
+     空、纯空格、以及明显是占位的值（如 12345678 / 待补充）都算没填。
+     这样资料没到位时 UI 会自动降级，填上后无需改代码。 */
+  var PLACEHOLDER_RE = /^(12345678|待补充|todo|tbd|xxx+|test|-+)$/i;
+  function isRealValue(v) {
+    if (v == null) return false;
+    var s = String(v).trim();
+    if (!s) return false;
+    if (PLACEHOLDER_RE.test(s)) return false;
+    return true;
+  }
+
   function byId(id) {
     var list = window.WORKS || [];
     for (var i = 0; i < list.length; i++) { if (list[i].id === id) return list[i]; }
@@ -303,55 +315,107 @@
     setText('#stat-cats', String((window.CATEGORIES || []).length));
     setText('#stat-years', range);
 
-    // 联系方式
+    // 联系方式：留空或明显是占位值时自动隐藏该项，不显示"待补充"半成品
     var c = site.contact || {};
-    var emailEl = $('#contact-email');
-    var hasEmail = c.email && c.email.indexOf('@') > 0;
     var todo = T('contact.todo', '待补充');
-    if (emailEl) {
-      emailEl.textContent = c.email || todo;
-      if (hasEmail) emailEl.href = 'mailto:' + c.email;
-      else emailEl.removeAttribute('href');
-    }
-    setText('#contact-wechat', c.wechat && c.wechat.indexOf('待补充') >= 0 ? todo : (c.wechat || todo));
+    var emailEl = $('#contact-email');
+    var hasEmail = isRealValue(c.email) && c.email.indexOf('@') > 0;
+    if (emailEl) emailEl.textContent = hasEmail ? c.email : '';
 
+    var emailItem = $('#contact-email-item');
+    if (emailItem) emailItem.hidden = !hasEmail;
+    if (hasEmail && emailEl) emailEl.href = 'mailto:' + c.email;
+
+    var hasWechat = isRealValue(c.wechat);
+    var wechatEl = $('#contact-wechat');
+    if (wechatEl) wechatEl.textContent = hasWechat ? c.wechat : '';
+    var wechatItem = $('#contact-wechat-item');
+    if (wechatItem) wechatItem.hidden = !hasWechat;
+
+    // 邮箱显示时，如果微信不显示，"·"分隔符要去掉
+    var sep = emailItem ? emailItem.querySelector('.sep') : null;
+    if (sep) sep.hidden = !hasWechat;
+
+    // 两项都没有：给一句得体的话，而不是留一片空
+    var todoEl = $('#contact-todo');
+    if (todoEl) todoEl.hidden = hasEmail || hasWechat;
+
+    // 发邮件按钮：没有邮箱时整块隐藏，避免一个点了没反应的按钮
     var mailBtn = $('#mail-btn');
     if (mailBtn) {
       if (hasEmail) {
+        mailBtn.hidden = false;
         mailBtn.href = 'mailto:' + c.email;
         mailBtn.removeAttribute('aria-disabled');
       } else {
+        mailBtn.hidden = true;
         mailBtn.href = 'javascript:void(0)';
         mailBtn.setAttribute('aria-disabled', 'true');
-        mailBtn.title = T('contact.email') + '：请在 assets/js/works-data.js 的 SITE.contact.email 里填写';
       }
     }
 
-    // 简历：文件不存在时给出明确提示，而不是跳到 404
-    // 注意：file:// 下无法发 HEAD 请求（浏览器限制），因此本地预览时不检查，
-    // 部署到 http(s) 后才会真正校验。
-    var resumeLinks = $$('[data-resume]');
-    var canCheck = location.protocol === 'http:' || location.protocol === 'https:';
-    if (resumeLinks.length && canCheck) {
-      var resumePath = (c.resume || 'resume.pdf');
-      fetch(resumePath, { method: 'HEAD' })
-        .then(function (res) { if (!res.ok) throw new Error('missing'); })
-        .catch(function () {
-          resumeLinks.forEach(function (a) {
-            a.removeAttribute('href');
-            a.removeAttribute('download');
-            a.setAttribute('aria-disabled', 'true');
-            a.title = '简历文件还没放进来：把 PDF 命名为 ' + resumePath + ' 放在站点根目录即可';
-            a.addEventListener('click', function (e) {
-              e.preventDefault();
-              alert('简历 PDF 还没放进来。\n把文件命名为 ' + resumePath + ' 放在站点根目录，按钮就会自动生效。');
-            });
-          });
-        });
+    // 个人照片：SITE.photo 有值就显示图片，否则显示设计过的占位块
+    var portrait = $('#portrait');
+    if (portrait) {
+      var photo = isRealValue(site.photo) ? site.photo : null;
+      var mark = $('#portrait-mark');
+      if (photo) {
+        portrait.classList.remove('is-placeholder');
+        portrait.innerHTML = '<img src="' + escapeHtml(photo) + '" alt="' +
+          escapeHtml((site.name || '') + ' · ' + T('about.title')) + '" decoding="async">';
+        var cap = $('#portrait-cap');
+        if (cap) cap.hidden = true;
+      } else {
+        portrait.classList.add('is-placeholder');
+        if (!mark) {
+          portrait.innerHTML = '<span class="portrait__mark" id="portrait-mark"></span>';
+          mark = $('#portrait-mark');
+        }
+        if (mark) mark.textContent = T('about.photoMark', '胡');
+      }
     }
+
+    // 简历可用性检测（首页与详情页共用同一套逻辑）
+    checkResume(site);
 
     setText('#footer-year', String(new Date().getFullYear()));
     setHtml('#footer-name', escapeHtml(site.name || ''));
+  }
+
+  /* 简历文件不存在时，把按钮文案与状态一起改掉 ——
+     留一个"下载简历"却点了没反应，比没有按钮更让人困惑。
+     文案放在 <span data-resume-label> 里，切语言时 i18n 能正常覆盖；
+     降级后再移除该属性，避免被覆盖回"下载简历"。
+     注意：file:// 下浏览器不允许 HEAD 请求，所以本地预览不检测，
+     部署到 http(s) 后才真正校验。 */
+  function checkResume(site) {
+    var c = (site && site.contact) || {};
+    var resumeLinks = $$('[data-resume]');
+    var canCheck = location.protocol === 'http:' || location.protocol === 'https:';
+    if (!resumeLinks.length || !canCheck) return;
+
+    var resumePath = (c.resume || 'resume.pdf');
+    fetch(resumePath, { method: 'HEAD' })
+      .then(function (res) { if (!res.ok) throw new Error('missing'); })
+      .catch(function () {
+        resumeLinks.forEach(function (a) {
+          var label = a.querySelector('[data-resume-label]');
+          var original = (label ? label.textContent : a.textContent).trim();
+          a.removeAttribute('href');
+          a.removeAttribute('download');
+          a.setAttribute('aria-disabled', 'true');
+          a.classList.add('is-missing');
+          a.setAttribute('aria-label', original + '（' + T('resume.missing') + '）');
+          if (label) {
+            label.textContent = T('resume.missing');
+            label.removeAttribute('data-i18n');
+          } else {
+            a.textContent = T('resume.missing');
+          }
+          a.title = T('resume.missing') + '：把 PDF 命名为 ' + resumePath + ' 放在站点根目录即自动生效';
+          a.addEventListener('click', function (e) { e.preventDefault(); });
+        });
+      });
   }
 
   /* ---------- 启动 ---------- */

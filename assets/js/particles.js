@@ -228,4 +228,23 @@
 
   resize();
   if (reduce) draw(); else start();
+
+  /* ---------- 滚动时首屏内容轻微退场 ----------
+     只写一个 CSS 变量，实际动画交给 CSS 合成层，几乎不耗性能。
+     用 rAF 节流，避免在滚动事件里直接写样式造成抖动。 */
+  var heroEl = canvas.parentElement;
+  var ticking = false;
+  function updateFade() {
+    ticking = false;
+    var h = heroEl.getBoundingClientRect().height || H || 1;
+    var y = window.scrollY || document.documentElement.scrollTop || 0;
+    var t = Math.max(0, Math.min(1, y / (h * 0.75)));
+    heroEl.style.setProperty('--hero-fade', t.toFixed(3));
+  }
+  window.addEventListener('scroll', function () {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(updateFade);
+  }, { passive: true });
+  updateFade();
 })();

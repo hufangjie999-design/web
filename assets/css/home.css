@@ -46,6 +46,12 @@
     radial-gradient(900px 520px at 16% 82%, rgba(72,132,255,.10), transparent 60%),
     linear-gradient(180deg,#080B12 0%,#0A0F18 55%,#080B12 100%);
 }
+/* 滚动时首屏内容轻微退场（由 particles.js 写入 --hero-fade，0→1） */
+.hero__in{
+  opacity:calc(1 - var(--hero-fade, 0) * .92);
+  transform:translateY(calc(var(--hero-fade, 0) * -14px));
+  transition:transform .08s linear;
+}
 /* 细网格（"仪表盘"质感） */
 .hero::before{
   content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
@@ -153,6 +159,19 @@
 .reveal{opacity:0;transform:translateY(14px);transition:opacity .6s var(--ease), transform .6s var(--ease)}
 .reveal.is-in{opacity:1;transform:none}
 
+/* 错开淡入：同一批卡片依次进场，比整片一起出现更有节奏 */
+.reveal.is-in{transition-delay:var(--d, 0s)}
+.card:nth-child(3n+2){--d:.07s}
+.card:nth-child(3n+3){--d:.14s}
+.card:nth-child(3n+4){--d:.21s}
+.card:nth-child(3n+5){--d:.28s}
+.featured .card:nth-child(2){--d:.08s}
+.featured .card:nth-child(3){--d:.16s}
+@media (max-width:960px){
+  .card:nth-child(n){--d:0s}   /* 手机上少一点延迟，避免显得迟钝 */
+  .card:nth-child(2n){--d:.06s}
+}
+
 /* 禁用 JS 时不要隐藏任何内容 */
 .no-js .reveal{opacity:1;transform:none}
 
@@ -168,18 +187,50 @@
 }
 .tl-row b{font-weight:600}
 .tl-row span{color:var(--ink-2)}
-.portrait{border-radius:var(--radius);overflow:hidden;border:1px solid var(--line);background:var(--bg-soft);aspect-ratio:4/5}
+.portrait{border-radius:var(--radius);overflow:hidden;border:1px solid var(--line);background:var(--bg-soft);aspect-ratio:4/5;position:relative}
 .portrait img{width:100%;height:100%;object-fit:cover;object-position:top center;filter:grayscale(.15)}
 .portrait__cap{font-size:13px;color:var(--ink-3);padding-top:12px}
+
+/* 照片未提供时的占位块：做一个"刻意设计过"的样子，
+   而不是放一张不相干的图，或者留一个破图图标 */
+.portrait.is-placeholder{
+  display:flex;align-items:center;justify-content:center;
+  background:
+    radial-gradient(120% 90% at 70% 20%, rgba(47,107,95,.10), transparent 60%),
+    linear-gradient(160deg,#F4F6F7,#E9EDEE);
+  border-style:dashed;border-color:var(--line-2);
+}
+.portrait.is-placeholder::after{
+  content:"";position:absolute;inset:16px;border-radius:8px;
+  border:1px solid rgba(47,107,95,.14);pointer-events:none;
+}
+.portrait__mark{
+  font-size:44px;font-weight:800;letter-spacing:.06em;
+  color:var(--accent);opacity:.34;user-select:none;
+}
 
 /* ---------- 联系方式 ---------- */
 .contact{margin-top:76px}
 .contact__in{display:flex;align-items:center;justify-content:space-between;gap:32px;flex-wrap:wrap}
 .contact h3{font-size:26px}
 .contact p{color:var(--dark-dim);font-size:14px;margin-top:10px}
+.contact__line{display:flex;flex-wrap:wrap;align-items:baseline;gap:0 6px}
+/* hidden 属性要显式声明 display:none —— 否则会被上面的 flex 覆盖 */
+.contact__item[hidden]{display:none}
+.contact__todo[hidden]{display:none}
+.contact__item .sep{padding:0 6px}
+.contact__item .sep[hidden]{display:none}
+.contact__todo{color:#8A99AB;font-style:italic}
 .contact__actions{display:flex;gap:12px;flex-wrap:wrap}
+.contact__actions [hidden]{display:none}
 .contact a{color:#fff;border-bottom:1px solid rgba(255,255,255,.3)}
 .contact a:hover{border-color:#fff}
+
+/* 简历文件缺失时的按钮状态：看起来就是"还没好"，而不是"坏了" */
+.btn.is-missing{
+  opacity:.7;cursor:default;
+  border-style:dashed;
+}
 
 /* ---------- 响应式 ---------- */
 @media (max-width:960px){
